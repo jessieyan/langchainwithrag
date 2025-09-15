@@ -29,7 +29,6 @@ username = "ai_test"
 password = "Testtest123"
 database = "postgres_test"
 
-🟢 Compose connection string
 postgres_url = f"postgresql://{username}:{password}@{endpoint}:5432/{database}"
 
 connection_kwargs = {

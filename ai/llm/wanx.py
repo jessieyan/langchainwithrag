@@ -1,6 +1,3 @@
-#  Copyright (c) 2025 深圳优儿智能科技有限公司
-#  All rights reserved.
-
 import os
 from http import HTTPStatus
 from urllib.parse import urlparse, unquote

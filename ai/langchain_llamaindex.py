@@ -13,7 +13,6 @@ index = VectorStoreIndex.from_documents(documents)
 query_engine = index.as_query_engine()
 
 
-
 # Create memory to store conversation history
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
