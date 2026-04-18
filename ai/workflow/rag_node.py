@@ -1,22 +1,9 @@
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
 from langchain.chains import LLMChain
-from llama_retriever import get_llama_retriever
-from embedding_model import get_embedding
-from vector_store import get_vector_store
 from llm.deepseek import deepseek_llm
+from workflow.retrieval import retriever
 from workflow.state import State
-
-knowledge_base = "knowledge_base/data"
-
-# Create embeddings
-embed_model = get_embedding('dashscope')
-
-# Create vector store
-vector_store = get_vector_store('milvus')
-
-# Create llama index retriever
-retriever = get_llama_retriever(vector_store=vector_store, embed_model=embed_model, dir=knowledge_base)
 
 template_text = """
 You are a helpful assistant.
