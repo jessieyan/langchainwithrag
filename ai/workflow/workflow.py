@@ -11,34 +11,38 @@ from workflow.track_tool_node import track_tool_node
 from workflow.understand_image_node import understand_image_node
 from workflow.state import State
 from dotenv import load_dotenv
-from langgraph.checkpoint.postgres import PostgresSaver
-from IPython.display import Image, display
-from psycopg import Connection
-import sqlite3
-from langgraph.checkpoint.sqlite import SqliteSaver
-
-# uncommentfor local test
-# db_path = "memory.db"
-# conn = sqlite3.connect(db_path, check_same_thread=False)
-# sql_memory = SqliteSaver(conn)
 
 load_dotenv(override=True)
 
-endpoint = "pc-wz9nv355xw5ed6129.pg.polardb.rds.aliyuncs.com:5432"
-username = "ai_test"
-password = "Testtest123"
-database = "postgres_test"
 
-postgres_url = f"postgresql://{username}:{password}@{endpoint}:5432/{database}"
+def _build_checkpointer():
+    """Return a LangGraph checkpointer.
 
-connection_kwargs = {
-    "autocommit": True,
-    "prepare_threshold": 0,
-}
+    Uses Postgres when ``POSTGRES_URL`` is set (production), otherwise a
+    local sqlite file so the workflow can run without remote infra.
+    """
+    import os
 
-conn = Connection.connect(postgres_url, **connection_kwargs)
-checkpointer = PostgresSaver(conn)
-checkpointer.setup()
+    postgres_url = os.getenv("POSTGRES_URL")
+    if postgres_url:
+        from langgraph.checkpoint.postgres import PostgresSaver
+        from psycopg import Connection
+
+        conn = Connection.connect(
+            postgres_url, autocommit=True, prepare_threshold=0
+        )
+        saver = PostgresSaver(conn)
+        saver.setup()
+        return saver
+
+    import sqlite3
+    from langgraph.checkpoint.sqlite import SqliteSaver
+
+    conn = sqlite3.connect("memory.db", check_same_thread=False)
+    return SqliteSaver(conn)
+
+
+checkpointer = _build_checkpointer()
 
 
 # [input] → [router_node] ─┬──► [rag_node] ──► [rag_video_node] ──► [track_tool_node] ─► END
@@ -88,14 +92,14 @@ def generate_workflow():
 
     # Compile the graph
     workflow = graph.compile(checkpointer=checkpointer)
-    # workflow = graph.compile(checkpointer=sql_memory)
 
-    # Display as image (if using Jupyter or IPython)
-    display(Image(workflow.get_graph().draw_mermaid_png()))
-
-    # Save image to file
-    with open("graph.png", "wb") as f:
-     f.write(workflow.get_graph().draw_mermaid_png())   
+    # Save graph diagram to file. Rendering uses a remote mermaid service,
+    # so failures here must not block startup.
+    try:
+        with open("graph.png", "wb") as f:
+            f.write(workflow.get_graph().draw_mermaid_png())
+    except Exception as e:
+        print(f"[workflow] skipped graph render: {e}")
 
     return workflow
 
