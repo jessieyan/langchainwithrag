@@ -66,7 +66,8 @@ def ingest(knowledge_base_dir: str = DEFAULT_KNOWLEDGE_BASE) -> int:
         )
 
     embed_model = get_embedding("dashscope")
-    vector_store = get_vector_store("milvus")
+    # overwrite=True so the index is rebuilt from scratch on each ingest run
+    vector_store = get_vector_store("milvus", overwrite=True)
 
     documents = SimpleDirectoryReader(knowledge_base_dir).load_data()
     documents.extend(SEED_DOCUMENTS)
