@@ -21,7 +21,7 @@ from langchain.schema import HumanMessage, AIMessage
 from langgraph.graph import StateGraph, END
 import os
 
-os.environ["DASHSCOPE_API_KEY"] = "sk-6e5c573c75044deb80371b793a8b24a3"
+os.environ.setdefault("DASHSCOPE_API_KEY", "")
 knowledge_base = "./knowledge_base/data"
 store = InMemoryStore()   # Stores memory by session key
 saver = InMemorySaver(store=store)

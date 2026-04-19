@@ -12,8 +12,8 @@ def rag_video_node(state: State) -> State:
     """Retrieve documents and extract the top video URL, if any."""
     results = retriever.invoke(state["messages"][-1].content)
 
-    # The "url" metadata key is guaranteed by the ingestion pipeline
-    # (see SEED_DOCUMENTS in ingest.py).
-    video_url = results[0].metadata["url"] if results else None
+    # Seed documents from ingest.py carry a "url" metadata key, but
+    # file-based chunks from SimpleDirectoryReader may not have one.
+    video_url = results[0].metadata.get("url") if results else None
     return {**state, "video_url": video_url, "result": "Success"}
 

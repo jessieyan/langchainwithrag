@@ -3,6 +3,7 @@
 Uses an LCEL chain (retriever | prompt | llm | parser) instead of the
 legacy ``RetrievalQA`` which was removed in LangChain 1.x.
 """
+from langchain_core.messages import AIMessage
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
@@ -37,4 +38,6 @@ rag_chain = (
 def rag_node(state: State) -> State:
     """Workflow node: run RAG chain on the latest user message."""
     response = rag_chain.invoke(state["messages"][-1].content)
-    return {**state, "messages": response}
+    # State.messages uses add_messages reducer which expects message objects,
+    # not raw strings from StrOutputParser.
+    return {**state, "messages": [AIMessage(content=response)]}
