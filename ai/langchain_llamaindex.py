@@ -2,6 +2,7 @@ from llama_index import VectorStoreIndex, SimpleDirectoryReader
 from langchain.agents import initialize_agent, Tool
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
+from langchain.agents import initialize_agent, Tool
 
 
 #Create a LlamaIndex Index

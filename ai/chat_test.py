@@ -1,4 +1,4 @@
-import os
+aimport os
 from langchain.chains import ConversationalRetrievalChain
 from langchain_openai import ChatOpenAI
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
@@ -6,7 +6,7 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from embedding_model import get_embedding
 from vector_store import get_vector_store
 from llama_retriever import get_llama_retriever
@@ -27,7 +27,7 @@ def question_answer_chat(role: str = None):
     vector_store = get_vector_store('milvus')
 
     # Create llama index retriever
-    vector_retriever = get_llama_retriever(vector_store=vector_store, embed_model=embed_model)
+    vector_retriever = get_llama_retriever(vector_store=vector_store, embed_mode=embed_model, dir=knowledge_base)
 
     # Create keyword retriever
     keyword_retriever = get_keyword_retriever(dir=knowledge_base)
@@ -114,7 +114,7 @@ llm = ChatOpenAI(
 )
 embed_model = get_embedding('dashscope')
 vector_store = get_vector_store('milvus')
-vector_retriever = get_llama_retriever(vector_store=vector_store, embed_model=embed_model)
+vector_retriever = get_llama_retriever(vector_store=vector_store, embed_mode=embed_model, dir=knowledge_base)
     # Create keyword retriever
 keyword_retriever = get_keyword_retriever(dir=knowledge_base)
 
