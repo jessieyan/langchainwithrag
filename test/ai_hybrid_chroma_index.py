@@ -6,7 +6,9 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 # from IPython.display import Markdown, display
 import chromadb
 
-from llamaindex_langchain_retriever import LlamaIndexLangChainRetriever
+from Hybrid_Retriever import HybridRetriever
+from LlamaIndexLangChainRetriever import LlamaIndexLangChainRetriever
+from LlamaIndexRetrieverWrapper import LlamaIndexRetrieverWrapper
 
 # create client and a new collection
 chroma_client = chromadb.EphemeralClient()
